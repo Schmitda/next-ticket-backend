@@ -1,4 +1,4 @@
-import { User } from './user';
+import { User } from '../entities/user';
 
 export const UserArray: User[] = [
   new User('Daniel', 'Schmitz', 'Test123', 'daniel.schmitz@schmitz-dynamics.ch'),

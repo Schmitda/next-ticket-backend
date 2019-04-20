@@ -2,16 +2,25 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserController } from './user/user.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserSchema } from './schema/user.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user';
+
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/ticket'),
-    MongooseModule.forFeature([{
-      name: 'User',
-      schema: UserSchema,
-    }]),
+    /*  MongooseModule.forRoot('mongodb://localhost/ticket'),
+      MongooseModule.forFeature([{
+        name: 'User',
+        schema: UserSchema,
+      }]),*/
+    TypeOrmModule.forRoot({
+      type: 'mongodb',
+      host: 'localhost',
+      database: 'test',
+      entities: [__dirname + '/**/user{.ts,.js}'],
+      synchronize: true,
+    }),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [
     AppController,

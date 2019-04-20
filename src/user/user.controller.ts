@@ -1,18 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { User, UserDBD } from './user';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { User } from '../entities/user';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MongoRepository } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 @Controller('api/user')
 export class UserController {
 
-  constructor(@InjectModel('User') private readonly userModel: Model<UserDBD>) {
+  constructor(@InjectRepository(User) private readonly userRepository: MongoRepository<any>) {
   }
 
   @Get()
   get() {
     return new Promise((resolve, reject) => {
-      this.userModel.find().then(users => {
+      this.userRepository.find().then(users => {
         resolve(users);
       });
     });
@@ -20,14 +21,18 @@ export class UserController {
 
   @Post()
   create(@Body() userToAdd: User) {
-    const user = new this.userModel(userToAdd);
-    return user.save();
+    const user: any = new User();
+    user.firstName = userToAdd.firstName;
+    user.lastName = userToAdd.lastName;
+    user.email = userToAdd.email;
+    user.password = userToAdd.password;
+    return this.userRepository.save(user);
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
+  getById(@Param('id') id: any) {
     return new Promise((resolve, reject) => {
-      this.userModel.findById(id).then(users => {
+      this.userRepository.findOne({ _id: new ObjectId(id) }).then(users => {
         resolve(users);
       });
     });
@@ -36,8 +41,8 @@ export class UserController {
   @Put(':id')
   update(@Body() userToUpdate: User, @Param('id') userId: string) {
     return new Promise((resolve, reject) => {
-      this.userModel.findByIdAndUpdate(userId, { $set: userToUpdate }, { 'new': true }).then(users => {
-        resolve(users);
+      this.userRepository.findOneAndUpdate({ _id: new ObjectId(userId) }, { $set: userToUpdate }).then(user => {
+        resolve(user);
       });
     });
   }
@@ -45,7 +50,7 @@ export class UserController {
   @Delete(':id')
   delete(@Param('id') userId: string) {
     return new Promise((resolve, reject) => {
-      this.userModel.findByIdAndRemove(userId).then(users => {
+      this.userRepository.findOneAndDelete({ _id: new ObjectId(userId) }).then(users => {
         resolve(users);
       });
     });
