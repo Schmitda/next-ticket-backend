@@ -10,45 +10,33 @@ export class UserController {
   }
 
   @Get()
-  get() {
-    return new Promise((resolve, reject) => {
-      this.userModel.find().then(users => {
-        resolve(users);
-      });
-    });
+  async get() {
+    const users = await this.userModel.find().exec();
+    return users;
   }
 
   @Post()
-  create(@Body() userToAdd: User) {
+  async create(@Body() userToAdd: User) {
     const user = new this.userModel(userToAdd);
     return user.save();
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return new Promise((resolve, reject) => {
-      this.userModel.findById(id).then(users => {
-        resolve(users);
-      });
-    });
+  async getById(@Param('id') id: string) {
+    const user = await this.userModel.findById(id).exec();
+    return user;
   }
 
   @Put(':id')
-  update(@Body() userToUpdate: User, @Param('id') userId: string) {
-    return new Promise((resolve, reject) => {
-      this.userModel.findByIdAndUpdate(userId, { $set: userToUpdate }, { 'new': true }).then(users => {
-        resolve(users);
-      });
-    });
+  async update(@Body() userToUpdate: User, @Param('id') userId: string) {
+    const users = await this.userModel.findByIdAndUpdate(userId, { $set: userToUpdate }, { 'new': true }).exec();
+    return users;
   }
 
   @Delete(':id')
-  delete(@Param('id') userId: string) {
-    return new Promise((resolve, reject) => {
-      this.userModel.findByIdAndRemove(userId).then(users => {
-        resolve(users);
-      });
-    });
+  async delete(@Param('id') userId: string) {
+    await this.userModel.findByIdAndRemove(userId).exec();
+    return null;
   }
 
 }
