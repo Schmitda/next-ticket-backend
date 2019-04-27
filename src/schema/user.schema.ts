@@ -18,6 +18,9 @@ export const UserSchema = new Schema({
   id: {
     type: String,
   },
+  refresherTokens: [{
+    type: String,
+  }],
 });
 
 const encryptionService = new EncryptionService();

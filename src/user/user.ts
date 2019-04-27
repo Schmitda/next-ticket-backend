@@ -5,6 +5,7 @@ export interface UserInterface {
   lastName: string;
   password: string;
   email: string;
+  refresherTokens: string[];
 }
 
 export interface UserDBD extends Document, UserInterface {

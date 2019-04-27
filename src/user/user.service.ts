@@ -4,33 +4,44 @@ import { User, UserDBD } from './user';
 import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
-export class  UserService {
+export class UserService {
   constructor(@InjectModel('User') private readonly userModel: Model<UserDBD>) {
   }
 
-  async findAll() {
+  findAll() {
     return this.userModel.find().exec();
   }
 
-  async findById(id: string) {
+  findById(id: string) {
     return this.userModel.findById({ _id: id }).exec();
   }
 
-  async save(userToSave: User) {
+  addRefresherToken(email: string, token: string) {
+    return this.userModel.findOneAndUpdate({ email }, { $set: { $push: { refresherTokens: token } } }).exec();
+  }
+
+  findUserByUsername(username: string) {
+    return this.userModel.findOne({ username }).exec();
+  }
+
+  save(userToSave: User) {
     const user = new this.userModel(userToSave);
     return user.save();
   }
 
-  async update(id: string, userToUpdate: User) {
-    return this.userModel.findByIdAndUpdate(id, { $set: userToUpdate }, { 'new': true }).exec();
+  update(id: string, userToUpdate: User) {
+    return this.userModel.findByIdAndUpdate(id, { $set: userToUpdate }, { new: true }).exec();
   }
 
-  async delete(id: string) {
+  delete(id: string) {
     return this.userModel.findByIdAndRemove(id).exec();
   }
 
-  async findOneByEmail(email: string) {
+  findOneByEmail(email: string) {
     return this.userModel.findOne({ email }).exec();
   }
 
+  getUserByRefresherToken(refresherToken: string) {
+    return this.userModel.findOne({ refresherTokens: refresherToken }).exec();
+  }
 }
