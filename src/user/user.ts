@@ -1,26 +1,18 @@
 import { Document } from 'mongoose';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-export interface UserInterface {
-  firstName: string;
-  lastName: string;
-  password: string;
-  email: string;
-}
-
-export interface UserDBD extends Document, UserInterface {
-
-}
-
+@Entity()
 export class User {
+  @Column({type: 'varchar', length: 255})
   firstName: string;
+
+  @Column({type: 'varchar', length: 255})
   lastName: string;
+
+  @Column({type: 'char', length: 60})
   password: string;
+
+  @PrimaryColumn()
   email: string;
 
-  constructor(firstName: string, lastName: string, password: string, email: string) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.password = password;
-    this.email = email;
-  }
 }
